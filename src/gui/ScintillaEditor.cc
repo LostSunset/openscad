@@ -1,5 +1,12 @@
+#include "gui/ScintillaEditor.h"
+
+#include <functional>
+#include <exception>
+#include <memory>
 #include <ciso646> // C alternative tokens (xor)
 #include <cstdlib>
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -10,11 +17,10 @@
 #include <QShortcut>
 #include <Qsci/qscicommandset.h>
 
-#include "ScintillaEditor.h"
-#include "Preferences.h"
-#include "PlatformUtils.h"
-#include "Settings.h"
-#include "ScadLexer.h"
+#include "gui/Preferences.h"
+#include "platform/PlatformUtils.h"
+#include "gui/Settings.h"
+#include "gui/ScadLexer.h"
 
 #include <QWheelEvent>
 #include <QPoint>

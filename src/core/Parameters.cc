@@ -24,11 +24,17 @@
  *
  */
 
-#include <set>
-#include <utility>
+#include "core/Parameters.h"
 
-#include "Expression.h"
-#include "Parameters.h"
+#include <sstream>
+#include <memory>
+#include <cstddef>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "core/Expression.h"
 
 Parameters::Parameters(ContextFrame&& frame, Location loc) :
   loc(std::move(loc)),

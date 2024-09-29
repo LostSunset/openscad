@@ -1,3 +1,5 @@
+#include "Feature.h"
+
 #include <cstdio>
 #include <iostream>
 #include <sstream>
@@ -7,8 +9,7 @@
 #include <boost/range/adaptor/transformed.hpp>
 #include <utility>
 
-#include "Feature.h"
-#include "printutils.h"
+#include "utils/printutils.h"
 
 /**
  * Feature registration map/list for later lookup. This must be initialized
