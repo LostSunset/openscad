@@ -3,10 +3,10 @@
 #include <QMainWindow>
 #include <QSettings>
 
-#include "qtgettext.h" // IWYU pragma: keep
+#include "gui/qtgettext.h" // IWYU pragma: keep
 #include "ui_Preferences.h"
-#include "Settings.h"
-#include "InitConfigurator.h"
+#include "gui/Settings.h"
+#include "gui/InitConfigurator.h"
 
 class Preferences : public QMainWindow, public Ui::Preferences, public InitConfigurator
 {
@@ -29,9 +29,9 @@ public slots:
   void featuresCheckBoxToggled(bool);
   void on_stackedWidget_currentChanged(int);
   void on_colorSchemeChooser_itemSelectionChanged();
-  void on_fontChooser_activated(const QString&);
-  void on_fontSize_currentIndexChanged(const QString&);
-  void on_syntaxHighlight_activated(const QString&);
+  void on_fontChooser_currentFontChanged(const QFont&);
+  void on_fontSize_currentIndexChanged(int);
+  void on_syntaxHighlight_textActivated(const QString & s);
   void on_openCSGWarningBox_toggled(bool);
   void on_cgalCacheSizeMBEdit_textChanged(const QString&);
   void on_polysetCacheSizeMBEdit_textChanged(const QString&);
@@ -53,6 +53,7 @@ public slots:
   void on_enableParameterCheckBox_toggled(bool);
   void on_enableRangeCheckBox_toggled(bool);
   void on_useAsciiSTLCheckBox_toggled(bool);
+  void on_comboBoxRenderBackend3D_activated(int);
   void on_comboBoxToolbarExport3D_activated(int);
   void on_comboBoxToolbarExport2D_activated(int);
   void on_checkBoxSummaryCamera_toggled(bool);
@@ -65,8 +66,10 @@ public slots:
   void on_timeThresholdOnRenderCompleteSoundEdit_textChanged(const QString&);
   void on_enableClearConsoleCheckBox_toggled(bool);
   void on_consoleMaxLinesEdit_textChanged(const QString&);
-  void on_consoleFontChooser_activated(const QString&);
-  void on_consoleFontSize_currentIndexChanged(const QString&);
+  void on_consoleFontChooser_currentFontChanged(const QFont&);
+  void on_consoleFontSize_currentIndexChanged(int);
+  void on_customizerFontChooser_currentFontChanged(const QFont&);
+  void on_customizerFontSize_currentIndexChanged(int);
   void on_checkBoxEnableAutocomplete_toggled(bool);
   void on_lineEditCharacterThreshold_textChanged(const QString&);
   //
@@ -98,6 +101,7 @@ public slots:
   void on_checkBoxEnableLineNumbers_toggled(bool);
 
   // Print
+  void on_comboBoxDefaultPrintService_activated(int);
   void on_pushButtonOctoPrintCheckConnection_clicked();
   void on_pushButtonOctoPrintSlicingEngine_clicked();
   void on_comboBoxOctoPrintSlicingEngine_activated(int);
@@ -105,9 +109,12 @@ public slots:
   void on_comboBoxOctoPrintSlicingProfile_activated(int);
   void on_comboBoxOctoPrintAction_activated(int);
   void on_comboBoxOctoPrintFileFormat_activated(int);
+  void on_comboBoxLocalSlicerFileFormat_activated(int);
   void on_lineEditOctoPrintURL_editingFinished();
   void on_lineEditOctoPrintApiKey_editingFinished();
   void on_pushButtonOctoPrintApiKey_clicked();
+  void on_pushButtonSelectLocalSlicerPath_clicked();
+  void on_lineEditLocalSlicer_editingFinished();
 
 signals:
   void requestRedraw() const;
@@ -115,6 +122,7 @@ signals:
   void updateReorderMode(bool undockMode) const;
   void fontChanged(const QString& family, uint size) const;
   void consoleFontChanged(const QString& family, uint size) const;
+  void customizerFontChanged(const QString& family, uint size) const;
   void colorSchemeChanged(const QString& scheme) const;
   void openCSGSettingsChanged() const;
   void syntaxHighlightChanged(const QString& s) const;
@@ -142,6 +150,9 @@ private:
   void writeSettings();
   void hidePasswords();
   void addPrefPage(QActionGroup *group, QAction *action, QWidget *widget);
+  void createFontSizeMenu(QComboBox *box, const QString &setting);
+  void updateGUIFontFamily(QFontComboBox *fontSelector, const QString &setting);
+  void updateGUIFontSize(QComboBox *fsSelector, const QString &setting);
 
   /** Set value from combobox to settings */
   void applyComboBox(QComboBox *comboBox, int val, Settings::SettingsEntryEnum& entry);

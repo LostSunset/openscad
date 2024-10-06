@@ -1,11 +1,13 @@
-#include "CGALWorker.h"
+#include "gui/CGALWorker.h"
+#include <exception>
+#include <memory>
 #include <QThread>
 
-#include "Tree.h"
-#include "GeometryEvaluator.h"
-#include "progress.h"
-#include "printutils.h"
-#include "exceptions.h"
+#include "core/Tree.h"
+#include "geometry/GeometryEvaluator.h"
+#include "core/progress.h"
+#include "utils/printutils.h"
+#include "utils/exceptions.h"
 
 CGALWorker::CGALWorker()
 {
@@ -30,7 +32,7 @@ void CGALWorker::start(const Tree& tree)
 void CGALWorker::work()
 {
   // this is a worker thread: we don't want any exceptions escaping and crashing the app.
-  shared_ptr<const Geometry> root_geom;
+  std::shared_ptr<const Geometry> root_geom;
   try {
     GeometryEvaluator evaluator(*this->tree);
     root_geom = evaluator.evaluateGeometry(*this->tree->root(), true);

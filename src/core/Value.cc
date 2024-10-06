@@ -24,20 +24,28 @@
  *
  */
 
+#include "core/Value.h"
+
+#include <limits>
+#include <ostream>
+#include <utility>
+#include <cstdint>
 #include <cassert>
+#include <cstddef>
 #include <memory>
 #include <numeric>
 #include <sstream>
+#include <string>
+#include <vector>
 #include <boost/lexical_cast.hpp>
 
-#include "Value.h"
-#include "EvaluationSession.h"
-#include "printutils.h"
-#include "StackCheck.h"
-#include "boost-utils.h"
-#include "double-conversion/double-conversion.h"
-#include "double-conversion/utils.h"
-#include "double-conversion/ieee.h"
+#include "core/EvaluationSession.h"
+#include "utils/printutils.h"
+#include "utils/StackCheck.h"
+#include "utils/boost-utils.h"
+#include <double-conversion/double-conversion.h>
+#include <double-conversion/utils.h>
+#include <double-conversion/ieee.h>
 
 namespace fs = boost::filesystem;
 
@@ -519,13 +527,13 @@ std::string Value::chrString() const
 }
 
 VectorType::VectorType(EvaluationSession *session) :
-  ptr(shared_ptr<VectorObject>(new VectorObject(), VectorObjectDeleter() ))
+  ptr(std::shared_ptr<VectorObject>(new VectorObject(), VectorObjectDeleter() ))
 {
   ptr->evaluation_session = session;
 }
 
 VectorType::VectorType(class EvaluationSession *session, double x, double y, double z) :
-  ptr(shared_ptr<VectorObject>(new VectorObject(), VectorObjectDeleter() ))
+  ptr(std::shared_ptr<VectorObject>(new VectorObject(), VectorObjectDeleter() ))
 {
   ptr->evaluation_session = session;
   emplace_back(x);
@@ -588,17 +596,17 @@ void VectorType::VectorObjectDeleter::operator()(VectorObject *v)
   }
 
   VectorObject *orig = v;
-  shared_ptr<VectorObject> curr;
-  std::vector<shared_ptr<VectorObject>> purge;
+  std::shared_ptr<VectorObject> curr;
+  std::vector<std::shared_ptr<VectorObject>> purge;
   while (true) {
     if (v && v->embed_excess) {
       for (Value& val : v->vec) {
         auto type = val.type();
         if (type == Value::Type::EMBEDDED_VECTOR) {
-          shared_ptr<VectorObject>& temp = std::get<EmbeddedVectorType>(val.value).ptr;
+          std::shared_ptr<VectorObject>& temp = std::get<EmbeddedVectorType>(val.value).ptr;
           if (temp.use_count() <= 1) purge.emplace_back(std::move(temp));
         } else if (type == Value::Type::VECTOR) {
-          shared_ptr<VectorObject>& temp = std::get<VectorType>(val.value).ptr;
+          std::shared_ptr<VectorObject>& temp = std::get<VectorType>(val.value).ptr;
           if (temp.use_count() <= 1) purge.emplace_back(std::move(temp));
         }
       }
@@ -1174,7 +1182,7 @@ std::ostream& operator<<(std::ostream& stream, const RangeType& r)
 }
 
 // called by clone()
-ObjectType::ObjectType(const shared_ptr<ObjectObject>& copy)
+ObjectType::ObjectType(const std::shared_ptr<ObjectObject>& copy)
   : ptr(copy)
 {
 }

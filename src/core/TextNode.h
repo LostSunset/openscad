@@ -1,7 +1,11 @@
 #pragma once
 
-#include "node.h"
-#include "FreetypeRenderer.h"
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "core/node.h"
+#include "core/FreetypeRenderer.h"
 
 class TextModule;
 
@@ -14,7 +18,7 @@ public:
   std::string toString() const override;
   std::string name() const override { return "text"; }
 
-  virtual std::vector<const class Geometry *> createGeometryList() const;
+  virtual std::vector<std::shared_ptr<const Geometry>> createGeometryList() const;
 
   virtual FreetypeRenderer::Params get_params() const;
 

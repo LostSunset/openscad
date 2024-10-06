@@ -3,10 +3,16 @@
 
 #ifdef ENABLE_CGAL
 
-#include "cgalutils.h"
-#include "CGALHybridPolyhedron.h"
-#include "node.h"
-#include "progress.h"
+#include <cassert>
+#include <utility>
+#include <memory>
+#include <cstddef>
+#include <vector>
+
+#include "geometry/cgal/cgalutils.h"
+#include "geometry/cgal/CGALHybridPolyhedron.h"
+#include "core/node.h"
+#include "core/progress.h"
 
 Location getLocation(const std::shared_ptr<const AbstractNode>& node)
 {
@@ -15,11 +21,11 @@ Location getLocation(const std::shared_ptr<const AbstractNode>& node)
 
 namespace CGALUtils {
 
-shared_ptr<CGALHybridPolyhedron> applyUnion3DHybrid(
+std::shared_ptr<CGALHybridPolyhedron> applyUnion3DHybrid(
   const Geometry::Geometries::const_iterator& chbegin,
   const Geometry::Geometries::const_iterator& chend)
 {
-  using QueueItem = std::pair<shared_ptr<CGALHybridPolyhedron>, int>;
+  using QueueItem = std::pair<std::shared_ptr<CGALHybridPolyhedron>, int>;
   struct QueueItemGreater {
     // stable sort for priority_queue by facets, then progress mark
     bool operator()(const QueueItem& lhs, const QueueItem& rhs) const
@@ -83,9 +89,9 @@ shared_ptr<CGALHybridPolyhedron> applyUnion3DHybrid(
    Applies op to all children and returns the result.
    The child list should be guaranteed to contain non-NULL 3D or empty Geometry objects
  */
-shared_ptr<CGALHybridPolyhedron> applyOperator3DHybrid(const Geometry::Geometries& children, OpenSCADOperator op)
+std::shared_ptr<CGALHybridPolyhedron> applyOperator3DHybrid(const Geometry::Geometries& children, OpenSCADOperator op)
 {
-  shared_ptr<CGALHybridPolyhedron> N;
+  std::shared_ptr<CGALHybridPolyhedron> N;
 
   assert(op != OpenSCADOperator::UNION && "use applyUnion3D() instead of applyOperator3D()");
   bool foundFirst = false;

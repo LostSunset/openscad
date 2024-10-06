@@ -1,15 +1,18 @@
 #pragma once
 
+#include <map>
 #include <iostream>
 #include <functional>
 #include <array>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include <boost/range/algorithm.hpp>
 #include <boost/range/adaptor/map.hpp>
 
-#include "Tree.h"
-#include "Camera.h"
-#include "memory.h"
+#include "core/Tree.h"
+#include "glview/Camera.h"
 
 class PolySet;
 
@@ -44,7 +47,7 @@ enum class paperSizes {
 // for gui, but declared here to keep it aligned with the enum.
 // can't use Qt mechanism in the IO code.
 // needs to match number of sizes
-const std::array<std::string,5> paperSizeStrings{  
+const std::array<std::string,5> paperSizeStrings{
 "A4","A3","Letter","Legal","Tabloid"
 };
 
@@ -58,7 +61,7 @@ const int paperDimensions[5][2]={
 {612,792},
 {612,1008},
 {792,1224}
-}; 
+};
 
 enum class paperOrientations {
 PORTRAIT,LANDSCAPE,AUTO
@@ -67,7 +70,7 @@ PORTRAIT,LANDSCAPE,AUTO
 // for gui, but declared here to keep it aligned with the enum.
 // can't use Qt mechanism in the IO code.
 // needs to match number of orientations
-const std::array<std::string,3> paperOrientationsStrings{  
+const std::array<std::string,3> paperOrientationsStrings{
 "Portrait","Landscape","Auto"
 };
 
@@ -78,41 +81,44 @@ struct ExportPdfOptions {
     bool showScaleMsg=TRUE;
     bool showGrid=FALSE;
     double gridSize=10.; // New
-    bool showDsgnFN=TRUE; 
+    bool showDsgnFN=TRUE;
     paperOrientations Orientation=paperOrientations::PORTRAIT;
     paperSizes paperSize=paperSizes::A4;
 };
 
 struct ExportInfo {
   FileFormat format;
-  std::string name2display;
-  std::string name2open;
+  std::string displayName;
+  std::string fileName;
   std::string sourceFilePath;
   std::string sourceFileName;
   bool useStdOut;
-  ExportPdfOptions *options=nullptr;
+  ExportPdfOptions *options;
 };
 
 
 bool canPreview(const FileFormat format);
-bool exportFileByName(const shared_ptr<const class Geometry>& root_geom, const ExportInfo& exportInfo);
+bool is3D(const FileFormat format);
+bool is2D(const FileFormat format);
 
-void export_stl(const shared_ptr<const Geometry>& geom, std::ostream& output,
+bool exportFileByName(const std::shared_ptr<const class Geometry>& root_geom, const ExportInfo& exportInfo);
+
+void export_stl(const std::shared_ptr<const Geometry>& geom, std::ostream& output,
                 bool binary = true);
-void export_3mf(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_obj(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_off(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_wrl(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_amf(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_dxf(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_svg(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_pdf(const shared_ptr<const Geometry>& geom, std::ostream& output, const ExportInfo& exportInfo);
-void export_nefdbg(const shared_ptr<const Geometry>& geom, std::ostream& output);
-void export_nef3(const shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_3mf(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_obj(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_off(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_wrl(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_amf(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_dxf(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_svg(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_pdf(const std::shared_ptr<const Geometry>& geom, std::ostream& output, const ExportInfo& exportInfo);
+void export_nefdbg(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
+void export_nef3(const std::shared_ptr<const Geometry>& geom, std::ostream& output);
 
 
 enum class Previewer { OPENCSG, THROWNTOGETHER };
-enum class RenderType { GEOMETRY, CGAL, OPENCSG, THROWNTOGETHER };
+enum class RenderType { GEOMETRY, BACKEND_SPECIFIC, OPENCSG, THROWNTOGETHER };
 
 struct ExportFileFormatOptions {
   const std::map<const std::string, FileFormat> exportFileFormats{
@@ -174,50 +180,8 @@ struct ViewOptions {
 class OffscreenView;
 
 std::unique_ptr<OffscreenView> prepare_preview(Tree& tree, const ViewOptions& options, Camera& camera);
-bool export_png(const shared_ptr<const class Geometry>& root_geom, const ViewOptions& options, Camera& camera, std::ostream& output);
+bool export_png(const std::shared_ptr<const class Geometry>& root_geom, const ViewOptions& options, Camera& camera, std::ostream& output);
 bool export_png(const OffscreenView& glview, std::ostream& output);
 bool export_param(SourceFile *root, const fs::path& path, std::ostream& output);
 
-namespace Export {
-
-struct Triangle {
-  std::array<int, 3> key;
-  Triangle(int p1, int p2, int p3)
-  {
-    // sort vertices with smallest value first without
-    // changing winding order of the triangle.
-    // See https://github.com/nophead/Mendel90/blob/master/c14n_stl.py
-
-    if (p1 < p2) {
-      if (p1 < p3) {
-        key = {p1, p2, p3}; // v1 is the smallest
-      } else {
-        key = {p3, p1, p2}; // v3 is the smallest
-      }
-    } else {
-      if (p2 < p3) {
-        key = {p2, p3, p1}; // v2 is the smallest
-      } else {
-        key = {p3, p1, p2}; // v3 is the smallest
-      }
-    }
-  }
-};
-
-class ExportMesh
-{
-public:
-  using Vertex = std::array<double, 3>;
-
-  ExportMesh(const PolySet& ps);
-
-  bool foreach_vertex(const std::function<bool(const Vertex&)>& callback) const;
-  bool foreach_indexed_triangle(const std::function<bool(const std::array<int, 3>&)>& callback) const;
-  bool foreach_triangle(const std::function<bool(const std::array<Vertex, 3>&)>& callback) const;
-
-private:
-  std::vector<Vertex> vertices;
-  std::vector<Triangle> triangles;
-};
-
-} // namespace Export
+std::unique_ptr<PolySet> createSortedPolySet(const PolySet& ps);

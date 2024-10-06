@@ -25,11 +25,12 @@
  */
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <ostream>
 
-#include "Parameters.h"
+#include "core/Parameters.h"
 #include <hb.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -156,7 +157,7 @@ public:
   FreetypeRenderer();
   virtual ~FreetypeRenderer() = default;
 
-  [[nodiscard]] std::vector<const class Geometry *> render(const FreetypeRenderer::Params& params) const;
+  [[nodiscard]] std::vector<std::shared_ptr<const class Geometry>> render(const FreetypeRenderer::Params& params) const;
 private:
   const static double scale;
   FT_Outline_Funcs funcs;

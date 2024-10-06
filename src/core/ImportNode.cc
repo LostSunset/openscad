@@ -24,25 +24,29 @@
  *
  */
 
-#include "io/import.h"
-#include "ImportNode.h"
+#include "core/ImportNode.h"
 
-#include "module.h"
-#include "ModuleInstantiation.h"
-#include "PolySet.h"
+#include "io/import.h"
+
+#include "core/module.h"
+#include "core/ModuleInstantiation.h"
+#include "geometry/PolySet.h"
 #ifdef ENABLE_CGAL
-#include "CGAL_Nef_polyhedron.h"
+#include "geometry/cgal/CGAL_Nef_polyhedron.h"
 #endif
-#include "Polygon2d.h"
-#include "Builtins.h"
-#include "Children.h"
-#include "DxfData.h"
-#include "Parameters.h"
-#include "printutils.h"
+#include "geometry/Polygon2d.h"
+#include "core/Builtins.h"
+#include "core/Children.h"
+#include "io/DxfData.h"
+#include "core/Parameters.h"
+#include "utils/printutils.h"
 #include "io/fileutils.h"
 #include "Feature.h"
 #include "handle_dep.h"
-#include "boost-utils.h"
+#include "utils/boost-utils.h"
+#include <ios>
+#include <utility>
+#include <memory>
 #include <sys/types.h>
 #include <sstream>
 #include <boost/algorithm/string.hpp>
@@ -52,9 +56,6 @@ namespace fs = boost::filesystem;
 using namespace boost::assign; // bring 'operator+=()' into scope
 
 #include <cstdint>
-
-extern PolySet *import_amf(const std::string&, const Location& loc);
-extern Geometry *import_3mf(const std::string&, const Location& loc);
 
 static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, Arguments arguments, const Children& children, ImportType type)
 {
@@ -171,9 +172,9 @@ static std::shared_ptr<AbstractNode> builtin_import_dxf(const ModuleInstantiatio
 /*!
    Will return an empty geometry if the import failed, but not nullptr
  */
-const Geometry *ImportNode::createGeometry() const
+std::unique_ptr<const Geometry> ImportNode::createGeometry() const
 {
-  Geometry *g = nullptr;
+  std::unique_ptr<Geometry> g;
   auto loc = this->modinst->location();
 
   switch (this->type) {
@@ -214,10 +215,10 @@ const Geometry *ImportNode::createGeometry() const
 #endif
   default:
     LOG(message_group::Error, "Unsupported file format while trying to import file '%1$s', import() at line %2$d", this->filename, loc.firstLine());
-    g = new PolySet(3);
+    g = PolySet::createEmpty();
   }
 
-  if (g) g->setConvexity(this->convexity);
+  g->setConvexity(this->convexity);
   return g;
 }
 

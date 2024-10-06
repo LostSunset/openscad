@@ -1,5 +1,6 @@
-#include "ErrorLog.h"
-#include "printutils.h"
+#include "gui/ErrorLog.h"
+#include "utils/printutils.h"
+#include <utility>
 #include <boost/filesystem.hpp>
 
 ErrorLog::ErrorLog(QWidget *parent) : QWidget(parent)
@@ -113,7 +114,7 @@ int ErrorLog::getLine(int row, int col)
   return logTable->model()->index(row, col).data().toInt();
 }
 
-void ErrorLog::on_errorLogComboBox_currentIndexChanged(const QString& group)
+void ErrorLog::on_errorLogComboBox_currentTextChanged(const QString& group)
 {
   errorLogModel->clear();
   initGUI();
