@@ -3,6 +3,8 @@
 #include "geometry/PolySet.h"
 #include "utils/printutils.h"
 #include "core/AST.h"
+#include <system_error>
+#include <map>
 #include <ios>
 #include <cstdint>
 #include <memory>

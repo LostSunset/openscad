@@ -48,6 +48,9 @@
 #include "core/customizer/ParameterObject.h"
 #include "core/customizer/ParameterSet.h"
 #include "openscad_mimalloc.h"
+#include <stdexcept>
+#include <map>
+#include <set>
 #include <utility>
 #include <exception>
 #include <sstream>
@@ -983,6 +986,7 @@ int main(int argc, char **argv)
     ("camera", po::value<string>(), "camera parameters when exporting png: =translate_x,y,z,rot_x,y,z,dist or =eye_x,y,z,center_x,y,z")
     ("autocenter", "adjust camera to look at object's center")
     ("viewall", "adjust camera to fit object")
+    ("backend", po::value<string>(), "3D rendering backend to use: 'CGAL' (old/slow) [default] or 'Manifold' (new/fast)")
     ("imgsize", po::value<string>(), "=width,height of exported png")
     ("render", po::value<string>()->implicit_value(""), "for full geometry evaluation when exporting png")
     ("preview", po::value<string>()->implicit_value(""), "[=throwntogether] -for ThrownTogether preview png")
@@ -1076,6 +1080,9 @@ int main(int argc, char **argv)
   if (vm.count("help")) help(argv[0], desc);
   if (vm.count("version")) version();
   if (vm.count("info")) arg_info = true;
+  if (vm.count("backend")) {
+    RenderSettings::inst()->backend3D = renderBackend3DFromString(vm["backend"].as<string>());
+  }
 
   if (vm.count("preview")) {
     if (vm["preview"].as<string>() == "throwntogether") viewOptions.renderer = RenderType::THROWNTOGETHER;

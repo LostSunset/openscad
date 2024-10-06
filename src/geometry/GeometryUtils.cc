@@ -1,5 +1,7 @@
 #include "geometry/GeometryUtils.h"
 
+#include <cassert>
+#include <unordered_map>
 #include <list>
 #include <utility>
 #include <boost/functional/hash.hpp>
@@ -12,6 +14,7 @@
 #include "libtess2/Include/tesselator.h"
 #include "utils/printutils.h"
 #include "geometry/Reindexer.h"
+#include "glview/RenderSettings.h"
 #include "Feature.h"
 #include "geometry/PolySet.h"
 
@@ -521,7 +524,7 @@ Transform3d GeometryUtils::getResizeTransform(const BoundingBox &bbox, const Vec
 std::shared_ptr<const Geometry> GeometryUtils::getBackendSpecificGeometry(const std::shared_ptr<const Geometry>& geom)
 {
 #if ENABLE_MANIFOLD
-  if (Feature::ExperimentalManifold.is_enabled()) {
+  if (RenderSettings::inst()->backend3D == RenderBackend3D::ManifoldBackend) {
     if (const auto ps = std::dynamic_pointer_cast<const PolySet>(geom)) {
       return ManifoldUtils::createManifoldFromPolySet(*ps);
     } else if (auto mani = std::dynamic_pointer_cast<const ManifoldGeometry>(geom)) {

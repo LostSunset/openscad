@@ -26,6 +26,8 @@
 
 #include "core/ContextMemoryManager.h"
 
+#include <variant>
+#include <cassert>
 #include <utility>
 #include <memory>
 #include <deque>
