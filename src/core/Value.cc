@@ -26,6 +26,7 @@
 
 #include "core/Value.h"
 
+#include <cmath>
 #include <variant>
 #include <limits>
 #include <ostream>
@@ -34,7 +35,6 @@
 #include <cassert>
 #include <cstddef>
 #include <memory>
-#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>

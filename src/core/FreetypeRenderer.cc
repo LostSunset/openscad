@@ -25,6 +25,7 @@
  */
 #include "core/FreetypeRenderer.h"
 
+#include <algorithm>
 #include <limits>
 #include <cstdint>
 #include <memory>
@@ -32,7 +33,6 @@
 #include <cstdio>
 #include <vector>
 
-#include <iostream>
 
 #include <fontconfig/fontconfig.h>
 

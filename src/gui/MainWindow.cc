@@ -25,6 +25,23 @@
  */
 #include "gui/MainWindow.h"
 
+#include <QApplication>
+#include <QDialog>
+#include <QElapsedTimer>
+#include <QEvent>
+#include <QFont>
+#include <QFontMetrics>
+#include <QIcon>
+#include <QKeySequence>
+#include <QList>
+#include <QMetaObject>
+#include <QPoint>
+#include <QSoundEffect>
+#include <QStringList>
+#include <QTextEdit>
+#include <QToolBar>
+#include <QWidget>
+#include <deque>
 #include <cassert>
 #include <array>
 #include <functional>
@@ -2234,6 +2251,8 @@ void MainWindow::sendToLocalSlicer()
     exportFileFormat = FileFormat::AMF;
   } else if (fileFormat == "3MF") {
     exportFileFormat = FileFormat::_3MF;
+  } else if (fileFormat == "POV") {
+    exportFileFormat = FileFormat::POV;
   } else {
     exportFileFormat = FileFormat::STL;
   }

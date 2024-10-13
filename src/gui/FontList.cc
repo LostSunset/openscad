@@ -1,10 +1,20 @@
 #include "gui/FontList.h"
 
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QModelIndex>
+#include <QPainter>
+#include <QPoint>
+#include <QResizeEvent>
+#include <QSize>
+#include <QSortFilterProxyModel>
+#include <QString>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include <array>
 #include <cstdint>
 #include <qitemselectionmodel.h>
 #include <string>
-#include <iostream>
 #include <vector>
 
 #include <QClipboard>

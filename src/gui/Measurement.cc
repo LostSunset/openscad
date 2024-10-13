@@ -26,8 +26,10 @@
 
 #include "gui/Measurement.h"
 
+#include <QPoint>
+#include <QString>
+#include <cmath>
 #include <sstream>
-#include <string>
 
 Measurement::Measurement()
 {

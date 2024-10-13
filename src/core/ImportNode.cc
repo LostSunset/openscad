@@ -44,6 +44,7 @@
 #include "Feature.h"
 #include "handle_dep.h"
 #include "utils/boost-utils.h"
+#include <cmath>
 #include <ios>
 #include <utility>
 #include <memory>
@@ -55,7 +56,6 @@ namespace fs = boost::filesystem;
 #include <boost/assign/std/vector.hpp>
 using namespace boost::assign; // bring 'operator+=()' into scope
 
-#include <cstdint>
 
 static std::shared_ptr<AbstractNode> do_import(const ModuleInstantiation *inst, Arguments arguments, const Children& children, ImportType type)
 {

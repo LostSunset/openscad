@@ -1,11 +1,10 @@
 #pragma once
 
+#include <QString>
+#include <QVariant>
 #include <QSettings>
-#include <map>
-#include <iostream>
 #include <memory>
 #include <mutex>
-#include <thread>
 
 #include "utils/printutils.h"
 

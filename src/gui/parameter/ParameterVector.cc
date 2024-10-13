@@ -1,5 +1,7 @@
 #include "gui/parameter/ParameterVector.h"
 
+#include <QWidget>
+#include <algorithm>
 #include <cassert>
 #include <limits>
 #include <cstddef>

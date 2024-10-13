@@ -29,7 +29,8 @@
 #include "gui/Preferences.h"
 #include "gui/input/AxisConfigWidget.h"
 #include "gui/input/ButtonConfigWidget.h"
-#include <ciso646> // C alternative tokens
+#include <QMetaObject>
+#include <QTimer>
 #include <cstddef>
 #include <string>
 #include <cmath>

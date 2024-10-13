@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QStringList>
+#include <map>
 #include <functional>
 #include <memory>
 #include <string>

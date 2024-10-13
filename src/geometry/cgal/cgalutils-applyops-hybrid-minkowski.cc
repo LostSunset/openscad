@@ -10,6 +10,7 @@
 #include "geometry/cgal/CGALHybridPolyhedron.h"
 #include "core/node.h"
 
+#include <iterator>
 #include <cassert>
 #include <list>
 #include <exception>
@@ -26,9 +27,6 @@
 
 #include <cstddef>
 #include <memory>
-#include <map>
-#include <queue>
-#include <unordered_set>
 #include <vector>
 
 namespace CGALUtils {

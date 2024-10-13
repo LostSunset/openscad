@@ -1,5 +1,10 @@
 #include "gui/ScadLexer.h"
 
+#include <QColor>
+#include <QObject>
+#include <QString>
+#include <QStringList>
+#include <iterator>
 #include <string>
 #include <vector>
 

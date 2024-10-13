@@ -1,13 +1,10 @@
+#include <cstring>
 #include <cassert>
 #include <array>
 #include <utility>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <vector>
 #include <memory>
 #include <cstdio>
-#include <functional>
 #include "glview/VertexArray.h"
 
 #include "utils/printutils.h"

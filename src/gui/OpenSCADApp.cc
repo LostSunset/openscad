@@ -4,10 +4,14 @@
 #include "gui/EventFilter.h"
 #endif
 
+#include <QApplication>
+#include <QEvent>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 #include <cassert>
 #include <exception>
 #include <QProgressDialog>
-#include <iostream>
 #include <boost/foreach.hpp>
 #include "gui/QSettingsCached.h"
 
