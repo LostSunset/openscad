@@ -127,7 +127,8 @@ bool useGUI()
 #endif // OPENSCAD_NOGUI
 
 bool checkAndExport(const std::shared_ptr<const Geometry>& root_geom, unsigned dimensions,
-                    FileFormat format, const bool is_stdout, const std::string& filename, const std::string& input_filename)
+                    FileFormat format, const bool is_stdout, const std::string& filename,
+		    const Camera *const camera, const std::string& input_filename)
 {
   if (root_geom->getDimension() != dimensions) {
     LOG("Current top level object is not a %1$dD object.", dimensions);
@@ -137,7 +138,7 @@ bool checkAndExport(const std::shared_ptr<const Geometry>& root_geom, unsigned d
     LOG("Current top level object is empty.");
     return false;
   }
-  ExportInfo exportInfo = {.format = format, .sourceFilePath = input_filename};
+  ExportInfo exportInfo = {.format = format, .sourceFilePath = input_filename, .camera = camera};
   if (is_stdout) {
     exportFileStdOut(root_geom, exportInfo);
   }
@@ -329,7 +330,8 @@ struct CommandLine
 int do_export(const CommandLine& cmd, const RenderVariables& render_variables, FileFormat export_format, SourceFile *root_file)
 {
   auto filename_str = fs::path(cmd.output_file).generic_string();
-  auto fpath = fs::absolute(fs::path(cmd.filename));
+  // Avoid possibility of fs::absolute throwing when passed an empty path
+  auto fpath = cmd.filename.empty() ? fs::current_path() : fs::absolute(fs::path(cmd.filename));
   auto fparent = fpath.parent_path();
 
   // set CWD relative to source file
@@ -444,7 +446,7 @@ int do_export(const CommandLine& cmd, const RenderVariables& render_variables, F
 
     const std::string input_filename = cmd.is_stdin ? "<stdin>" : cmd.filename;
     const int dim = fileformat::is3D(export_format) ? 3 : fileformat::is2D(export_format) ? 2 : 0;
-    if (dim > 0 && !checkAndExport(root_geom, dim, export_format, cmd.is_stdout, filename_str, input_filename)) {
+    if (dim > 0 && !checkAndExport(root_geom, dim, export_format, cmd.is_stdout, filename_str, &cmd.camera, input_filename)) {
       return 1;
     }
 
