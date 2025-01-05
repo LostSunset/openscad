@@ -228,6 +228,7 @@ std::unique_ptr<Polygon2d> GeometryEvaluator::applyHull2D(const AbstractNode& no
         outline.vertices.emplace_back(p[0], p[1]);
       }
       geometry->addOutline(outline);
+      geometry->setSanitized(true);
     } catch (const CGAL::Failure_exception& e) {
       LOG(message_group::Warning, "GeometryEvaluator::applyHull2D() during CGAL::convex_hull_2(): %1$s", e.what());
     }
@@ -767,15 +768,7 @@ Response GeometryEvaluator::visit(State& state, const LinearExtrudeNode& node)
   if (state.isPostfix()) {
     std::shared_ptr<const Geometry> geom;
     if (!isSmartCached(node)) {
-      std::shared_ptr<const Geometry> geometry;
-      if (!node.filename.empty()) {
-        DxfData dxf(node.fn, node.fs, node.fa, node.filename, node.layername, node.origin_x, node.origin_y, node.scale_x);
-
-        auto p2d = dxf.toPolygon2d();
-        if (p2d) geometry = ClipperUtils::sanitize(*p2d);
-      } else {
-        geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
-      }
+      const std::shared_ptr<const Geometry> geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
       if (geometry) {
         const auto polygons = std::dynamic_pointer_cast<const Polygon2d>(geometry);
         geom = extrudePolygon(node, *polygons);
@@ -919,14 +912,7 @@ Response GeometryEvaluator::visit(State& state, const RotateExtrudeNode& node)
   if (state.isPostfix()) {
     std::shared_ptr<const Geometry> geom;
     if (!isSmartCached(node)) {
-      std::shared_ptr<const Polygon2d> geometry;
-      if (!node.filename.empty()) {
-        DxfData dxf(node.fn, node.fs, node.fa, node.filename, node.layername, node.origin_x, node.origin_y, node.scale);
-        auto p2d = dxf.toPolygon2d();
-        if (p2d) geometry = ClipperUtils::sanitize(*p2d);
-      } else {
-        geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
-      }
+      const std::shared_ptr<const Polygon2d> geometry = applyToChildren2D(node, OpenSCADOperator::UNION);
       if (geometry) {
         geom = rotatePolygon(node, *geometry);
       }
